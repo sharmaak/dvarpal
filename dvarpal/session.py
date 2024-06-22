@@ -80,8 +80,9 @@ class SessionManager:
     def _get_access_code(self) -> str:
 
         options = uc.ChromeOptions()
-        # options.add_argument("--headless") # Do not enable this. Fails detecting OTP input
-        options.add_argument(f"--user-agent={self.__config.user_agent}")
+        if self.__config.browser_headless:
+            options.add_argument("--headless") # Do not enable this. Fails detecting OTP input
+        options.add_argument(f"--user-agent={self.__config.browser_useragent}")
         driver = uc.Chrome(options=options)
         try:
 
@@ -90,25 +91,33 @@ class SessionManager:
                          f'client_id={self.__config.client_id}&'
                          f'redirect_uri={quote(self.__config.redirect_uri)}')
             driver.get(authn_url)
+            time.sleep(5)
+            self.__logger.info('==> browser launched')
 
             phone_no = driver.find_element(By.ID, "mobileNum")
             phone_no.send_keys(self.__config.mobile)
+            self.__logger.info('==> mobile number entered')
+
             get_otp_btn = driver.find_element(By.ID, "getOtp")
             get_otp_btn.submit()
-            # driver.implicitly_wait(10)
+            self.__logger.info('==> OTP requested')
             time.sleep(5)
 
             otp = driver.find_element(By.ID, "otpNum")
             totp = pyotp.TOTP(self.__config.totp_secret_key).now()
             otp.send_keys(totp)
+            self.__logger.info('==> TOTP entered')
             continue_btn = driver.find_element(By.ID, "continueBtn")
             continue_btn.submit()
+            self.__logger.info('==> TOTP submitted')
             time.sleep(5)
 
             pin = driver.find_element(By.ID, "pinCode")
             pin.send_keys(self.__config.pin)
+            self.__logger.info('==> PIN entered')
             submit = driver.find_element(By.ID, "pinContinueBtn")
             submit.click()
+            self.__logger.info('==> PIN submitted')
             time.sleep(5)
 
             url = driver.current_url

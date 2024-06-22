@@ -14,7 +14,8 @@ class SessionConfig:
         self.authz_url: str = cfg['authz_url']
         self.redirect_uri: str = cfg['redirect_uri']
         self.session_validation_url: str = cfg['session_validation_url']
-        self.user_agent = cfg['user_agent']
+        self.browser_useragent = cfg.get('browser_useragent') if cfg.get('browser_useragent') is not None else 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1'
+        self.browser_headless = False if cfg.get('browser_headless') is None else cfg.get('browser_headless')
 
         self.client_id: str = cfg['client_id']
         self.client_secret: str = cfg['client_secret']
