@@ -1,0 +1,13 @@
+authn_url: https://api.upstox.com/v2/login/authorization/dialog
+authz_url: https://api.upstox.com/v2/login/authorization/token
+
+# The following properties are part of upstox app created for API access
+client_id: <your-client-id>
+client_secret: <your-client-secret>
+redirect_uri: <your-redirect-url>
+
+# TOTP secret key generated using https://help.upstox.com/support/solutions/articles/260343-what-is-totp-and-how-to-enable-totp-for-my-account-
+totp_secret_key: <your TOTP secret key>
+
+mobile: <your registered mobile number>
+pin: <your pin>
