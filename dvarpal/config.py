@@ -25,7 +25,9 @@ class SessionConfig:
 
     @staticmethod
     def _load_config_from_file():
-        config_file = os.path.join(os.getenv('HOME'), 'dvarpal.yaml')
+        # Choose home directory env variable based on OS. os.name = 'nt' for windows.
+        home_dir = os.getenv('USERPROFILE') if os.name == 'nt' else os.getenv('HOME')
+        config_file = os.path.join(home_dir, 'dvarpal.yaml')
         if not os.path.exists(config_file):
             pass
 
