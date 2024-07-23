@@ -8,7 +8,7 @@ class SessionConfig:
 
     def __init__(self):
         cfg = SessionConfig._load_config_from_file()
-        self.access_token_file = cfg.get('access_token_file') if cfg.get('access_token_file') else os.path.join(os.getenv('HOME'), 'dvarpal_session')
+        self.access_token_file = cfg.get('access_token_file') if cfg.get('access_token_file') else os.path.join(SessionConfig.get_home_dir(), 'dvarpal_session')
 
         self.authn_url: str = cfg['authn_url']
         self.authz_url: str = cfg['authz_url']
@@ -26,8 +26,7 @@ class SessionConfig:
     @staticmethod
     def _load_config_from_file():
         # Choose home directory env variable based on OS. os.name = 'nt' for windows.
-        home_dir = os.getenv('USERPROFILE') if os.name == 'nt' else os.getenv('HOME')
-        config_file = os.path.join(home_dir, 'dvarpal.yaml')
+        config_file = os.path.join(SessionConfig.get_home_dir(), 'dvarpal.yaml')
         if not os.path.exists(config_file):
             pass
 
@@ -35,4 +34,8 @@ class SessionConfig:
             config_data = yaml.safe_load(f)
         # logging.info(f'Loaded dvarpal config from file {config_file}')
         return config_data
+
+    @staticmethod
+    def get_home_dir():
+        return os.getenv('USERPROFILE') if os.name == 'nt' else os.getenv('HOME')
 
