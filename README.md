@@ -21,6 +21,13 @@ Dvarpal is designed so that support for more brokers can be added easily.
 pip install dvarpal
 ```
 
+## Prerequisite
+Dvarpal uses Selenium + Firefox ESR + Gecko Driver to perform automated logins. 
+Firefox ESR and Gecko Driver have to be installed on operating system. For linux, 
+this is automated in the script [install-firefox-esr-geckodriver.sh](etc/install-firefox-esr-geckodriver.sh)
+
+For Windows and Mac, it is left upto the user to perform similar installations. 
+
 ## Configuration
 
 Dvarpal picks up configration file from `${HOME}/dvarpal.yaml` file. A sample file for 
@@ -44,8 +51,12 @@ pin: <your pin>
 
 ## Usage
 
+Starting version 2.0.0, Dvarpal will use Firefox ESR + Gecko Driver. 
+Support for Google Chrome and Undetected Chromedriver have been deprecated. 
+In version 2.0.1, support for Chrome will be removed. 
+
 ```python
-from dvarpal.session import SessionManager
+from dvarpal.session_firefox import SessionManager
 
 session_manager = SessionManager()
 session_manager.generate_access_token()  # to generate a new access token

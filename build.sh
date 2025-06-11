@@ -4,7 +4,7 @@
 
 echo 'Deleting build directories ...'
 rm -frv ./build ./doot.egg-info ./dist
-python3 -m build --wheel
+python3 setup.py sdist bdist_wheel
 
 if [ $? -eq 0 ]; then
   echo '===> Build completed successfully'
@@ -23,3 +23,6 @@ if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
 else
   echo "===> Package not installed. To install run 'build.sh -i'."
 fi
+
+echo "Checking twine validity ..."
+twine check dist/*

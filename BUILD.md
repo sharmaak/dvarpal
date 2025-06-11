@@ -1,4 +1,10 @@
 
+## Prerequisites
+```
+sudo apt install twine
+pip install wheel
+```
+
 ## Build
 * Before you build, please ensure you update the project version in `{project-root}/setup.py`
   * The field is `setup -> version`
@@ -6,7 +12,7 @@
   * The build script will automatically delete the following build directories in project root
     * build/
     * dist/
-    * candlestix.egg-info/
+    * dvarpal.egg-info/
   * Next, it builds the project using `python3 -m build --wheel`
 
 ## Build and Local Install
