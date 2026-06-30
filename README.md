@@ -8,6 +8,7 @@ login mechanism for Indian stock brokers.
   * [Installation](#installation)
   * [Configuration](#configuration)
   * [Usage](#usage)
+  * [Upgrading from 2.x](#upgrading-from-2x)
 <!-- TOC -->
 
 ## Supported Brokers
@@ -122,3 +123,22 @@ Each broker's access_token is saved to its own file, `${HOME}/.dvarpal/dvarpal_s
 (e.g. `dvarpal_session_upstox`), so running multiple brokers never overwrites another's token. 
 Before generating a new access token, dvarpal checks that file. If it exists, it loads the 
 access token from file and uses it. If the token is expired or invalid, dvarpal generates a new one.
+
+## Upgrading from 2.x
+
+3.0.0 is a deliberate breaking release -- multi-broker support couldn't be bolted onto the 2.x 
+shape cleanly, so these changes are not backward compatible:
+
+* **Import path**: `dvarpal.session` (Chrome) and `dvarpal.session_firefox` no longer exist. 
+  Use `from dvarpal import get_session_manager` (or import a broker class from `dvarpal.brokers.*` 
+  directly) instead of `from dvarpal.session_firefox import SessionManager`.
+* **Config file shape**: `dvarpal.yaml` no longer accepts broker-specific fields 
+  (`client_id`, `authn_url`, `mobile`, etc.) at the top level. They must be nested under an 
+  `upstox:` or `zerodha:` section, as shown above -- only `broker`, `browser_useragent`, and 
+  `browser_headless` stay at the top level.
+* **Token cache filename**: the cached access token moved from `${HOME}/.dvarpal/dvarpal_session` 
+  to `${HOME}/.dvarpal/dvarpal_session_<broker>`. A token cached by 2.x is not picked up after 
+  upgrading; dvarpal just performs one fresh login and re-caches it at the new path.
+
+The underlying login automation for Upstox itself (form fields, OTP/TOTP/PIN flow, token 
+exchange) is unchanged from 2.x -- only how you reach it changed.
