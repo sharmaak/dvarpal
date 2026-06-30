@@ -1,5 +1,5 @@
+from dvarpal.brokers.upstox import UpstoxSessionManager
 from dvarpal.config import SessionConfig
-from dvarpal.session_firefox import SessionManager
 
 import logging
 import os
@@ -10,29 +10,29 @@ class TestSessionManager:
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def test_session_generation_no_file(self):
-        session_config = SessionConfig()
+        session_config = SessionConfig('upstox')
         print(session_config.__dict__)
         self.__delete_file_safely(session_config.access_token_file)
 
-        session_manager = SessionManager(session_config)
+        session_manager = UpstoxSessionManager(session_config)
         session_manager.generate_access_token()
 
     def test_session_generation_empty_file(self):
-        session_config = SessionConfig()
+        session_config = SessionConfig('upstox')
         self.__create_access_token_file(session_config.access_token_file, '')
 
-        session_manager = SessionManager(session_config)
+        session_manager = UpstoxSessionManager(session_config)
         session_manager.generate_access_token()
 
     def test_session_generation_invalid_token_in_file(self):
-        session_config = SessionConfig()
+        session_config = SessionConfig('upstox')
         self.__create_access_token_file(session_config.access_token_file, 'CRAP')
 
-        session_manager = SessionManager(session_config)
+        session_manager = UpstoxSessionManager(session_config)
         session_manager.generate_access_token()
 
     def test_session_generation_valid_token_in_file(self):
-        session_manager = SessionManager(SessionConfig())
+        session_manager = UpstoxSessionManager(SessionConfig('upstox'))
         session_manager.generate_access_token()
 
     def __delete_file_safely(self, file_path):

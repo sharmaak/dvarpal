@@ -10,7 +10,7 @@ class TestZerodhaSessionManager:
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def test_session_generation_no_file(self):
-        session_config = SessionConfig()
+        session_config = SessionConfig('zerodha')
         print(session_config.__dict__)
         self.__delete_file_safely(session_config.access_token_file)
 
@@ -18,21 +18,21 @@ class TestZerodhaSessionManager:
         session_manager.generate_access_token()
 
     def test_session_generation_empty_file(self):
-        session_config = SessionConfig()
+        session_config = SessionConfig('zerodha')
         self.__create_access_token_file(session_config.access_token_file, '')
 
         session_manager = ZerodhaSessionManager(session_config)
         session_manager.generate_access_token()
 
     def test_session_generation_invalid_token_in_file(self):
-        session_config = SessionConfig()
+        session_config = SessionConfig('zerodha')
         self.__create_access_token_file(session_config.access_token_file, 'CRAP')
 
         session_manager = ZerodhaSessionManager(session_config)
         session_manager.generate_access_token()
 
     def test_session_generation_valid_token_in_file(self):
-        session_manager = ZerodhaSessionManager(SessionConfig())
+        session_manager = ZerodhaSessionManager(SessionConfig('zerodha'))
         session_manager.generate_access_token()
 
     def __delete_file_safely(self, file_path):

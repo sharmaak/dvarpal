@@ -1,3 +1,6 @@
+# Selects which broker(s) dvarpal logs into: upstox | zerodha | all.
+# Fields below are flat (no upstox:/zerodha: section needed) since only one
+# broker is selected. See all-brokers.dvarpal.yaml for the `all` layout.
 broker: zerodha
 
 authn_url: https://kite.zerodha.com/connect/login

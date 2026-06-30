@@ -1,5 +1,11 @@
+# Selects which broker(s) dvarpal logs into: upstox | zerodha | all.
+# Fields below are flat (no upstox:/zerodha: section needed) since only one
+# broker is selected. See all-brokers.dvarpal.yaml for the `all` layout.
+broker: upstox
+
 authn_url: https://api.upstox.com/v2/login/authorization/dialog
 authz_url: https://api.upstox.com/v2/login/authorization/token
+session_validation_url: https://api-v2.upstox.com/user/profile
 
 # The following properties are part of upstox app created for API access
 client_id: <your-client-id>

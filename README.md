@@ -31,15 +31,23 @@ For Windows and Mac, it is left upto the user to perform similar installations.
 
 ## Configuration
 
-Dvarpal picks up its configuration file from `${HOME}/.dvarpal/dvarpal.yaml`. A `broker` 
-field selects which broker's login flow to use (`upstox` or `zerodha`, defaults to `upstox`). 
-Sample files for both brokers are shared below. For more samples, refer to 
-[config_samples](./config_samples) directory.
+Dvarpal picks up its configuration file from `${HOME}/.dvarpal/dvarpal.yaml`. The top-level 
+`broker` field selects which broker(s) to log into: `upstox`, `zerodha`, or `all` (both).
+
+When a single broker is selected, its fields can be written flat at the top level, as shown
+below. When `broker: all` is selected, each broker needs its own `upstox:`/`zerodha:` section,
+since each has a distinct client_id/secret and credentials that can't share a flat namespace --
+see [config_samples/all-brokers.dvarpal.yaml](config_samples/all-brokers.dvarpal.yaml). Fields
+left at the top level outside those sections (e.g. `browser_headless`) are shared defaults that
+any broker section can still override.
 
 Upstox:
 ```yaml
+broker: upstox
+
 authn_url: https://api.upstox.com/v2/login/authorization/dialog
 authz_url: https://api.upstox.com/v2/login/authorization/token
+session_validation_url: https://api-v2.upstox.com/user/profile
 
 # The following properties are part of upstox app created for API access
 client_id: <your-client-id>
@@ -74,10 +82,13 @@ totp_secret_key: <your TOTP secret key>
 pin: <your pin>
 ```
 
+For more samples, refer to the [config_samples](./config_samples) directory.
+
 ## Usage
 
 Starting version 2.0.0, Dvarpal uses Firefox ESR + Gecko Driver for all brokers.
 
+For a single broker (`broker: upstox` or `broker: zerodha`):
 ```python
 from dvarpal import get_session_manager
 
@@ -87,10 +98,20 @@ session_manager.is_session_valid()  # to check if access token is valid
 session_manager.get_access_token()  # get the actual access token string
 ```
 
+For `broker: all`, use `get_session_managers()` instead, which returns one manager per
+configured broker:
+```python
+from dvarpal import get_session_managers
+
+for broker_name, session_manager in get_session_managers().items():
+    session_manager.generate_access_token()
+    print(broker_name, session_manager.get_access_token())
+```
+
 You can also instantiate a broker-specific manager directly, e.g. 
 `from dvarpal.brokers.zerodha import ZerodhaSessionManager`.
 
-Upon generating an access_token, it is saved to text file `${HOME}/.dvarpal/dvarpal_session`. 
-Before generating a new access token, dvarpal checks the file. If file exists, it loads 
-the access token from file and uses it. If the 
-token is expired or invalid, dvarpal generates a new one.
+Each broker's access_token is saved to its own file, `${HOME}/.dvarpal/dvarpal_session_<broker>` 
+(e.g. `dvarpal_session_upstox`), so running multiple brokers never overwrites another's token. 
+Before generating a new access token, dvarpal checks that file. If it exists, it loads the 
+access token from file and uses it. If the token is expired or invalid, dvarpal generates a new one.

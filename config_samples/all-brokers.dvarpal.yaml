@@ -1,0 +1,33 @@
+# `broker: all` logs into every broker below. Each broker needs its own
+# section since each has a distinct client_id/client_secret and login
+# credentials -- a flat layout can't represent two brokers at once.
+#
+# Fields placed at the top level (outside the upstox:/zerodha: sections),
+# like browser_headless below, are shared defaults: any broker section may
+# still override them.
+broker: all
+
+browser_headless: false
+
+upstox:
+  authn_url: https://api.upstox.com/v2/login/authorization/dialog
+  authz_url: https://api.upstox.com/v2/login/authorization/token
+  session_validation_url: https://api-v2.upstox.com/user/profile
+  client_id: <your-upstox-client-id>
+  client_secret: <your-upstox-client-secret>
+  redirect_uri: <your-upstox-redirect-url>
+  totp_secret_key: <your upstox TOTP secret key>
+  mobile: <your registered mobile number>
+  pin: <your upstox pin>
+
+zerodha:
+  authn_url: https://kite.zerodha.com/connect/login
+  authz_url: https://api.kite.trade/session/token
+  session_validation_url: https://api.kite.trade/user/profile
+  client_id: <your-zerodha-api-key>
+  client_secret: <your-zerodha-api-secret>
+  redirect_uri: <your-zerodha-redirect-url>
+  user_id: <your zerodha user id>
+  password: <your zerodha password>
+  totp_secret_key: <your zerodha TOTP secret key>
+  pin: <your zerodha pin>
