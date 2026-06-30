@@ -23,9 +23,9 @@ class ZerodhaSessionManager(BaseSessionManager):
         driver.find_element(By.XPATH, "//button[@type='submit']").click()
         time.sleep(5)
 
-        # Zerodha's 2FA page (TOTP or PIN) doesn't expose a stable element
-        # id; it renders a single numeric input of type "tel".
-        twofa_field = driver.find_element(By.XPATH, "//input[@type='tel']")
+        # Zerodha's 2FA page reuses id="userid" for its TOTP/PIN input
+        # (distinguishable only by label="External TOTP" and type="number").
+        twofa_field = driver.find_element(By.ID, "userid")
         if self._config.totp_secret_key:
             twofa_field.send_keys(pyotp.TOTP(self._config.totp_secret_key).now())
             self._logger.info('==> TOTP entered')
@@ -34,6 +34,14 @@ class ZerodhaSessionManager(BaseSessionManager):
             self._logger.info('==> PIN entered')
         driver.find_element(By.XPATH, "//button[@type='submit']").click()
         time.sleep(5)
+
+        # The first time an app is authorized, Kite Connect shows an
+        # explicit consent screen (same submit button) before redirecting
+        # with request_token; subsequent logins skip straight past it.
+        if 'request_token=' not in driver.current_url:
+            driver.find_element(By.XPATH, "//button[@type='submit']").click()
+            self._logger.info('==> app authorization confirmed')
+            time.sleep(5)
 
         url = driver.current_url
         initial_request_token = url.split('request_token=')[1]
