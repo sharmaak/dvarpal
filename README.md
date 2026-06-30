@@ -8,6 +8,7 @@ login mechanism for Indian stock brokers.
   * [Installation](#installation)
   * [Configuration](#configuration)
   * [Usage](#usage)
+  * [Sample Code](#sample-code)
   * [Upgrading from 2.x](#upgrading-from-2x)
 <!-- TOC -->
 
@@ -123,6 +124,35 @@ Each broker's access_token is saved to its own file, `${HOME}/.dvarpal/dvarpal_s
 (e.g. `dvarpal_session_upstox`), so running multiple brokers never overwrites another's token. 
 Before generating a new access token, dvarpal checks that file. If it exists, it loads the 
 access token from file and uses it. If the token is expired or invalid, dvarpal generates a new one.
+
+## Sample Code
+
+A complete, runnable script is at [examples/generate_token.py](examples/generate_token.py). It 
+works no matter how many brokers `broker` in `dvarpal.yaml` selects, since `get_session_managers()` 
+always returns one manager per selected broker (a dict with a single entry when only one broker 
+is configured):
+
+```python
+import logging
+
+from dvarpal import get_session_managers
+
+logging.basicConfig(level=logging.INFO)
+
+for broker_name, session_manager in get_session_managers().items():
+    session_manager.generate_access_token()
+    print(f"[{broker_name}] access_token: {session_manager.get_access_token()}")
+    print(f"[{broker_name}] session valid: {session_manager.is_session_valid()}")
+```
+
+Run it with:
+```commandline
+python3 examples/generate_token.py
+```
+
+The first run opens a browser and drives the login form; subsequent runs reuse the cached token 
+from `${HOME}/.dvarpal/dvarpal_session_<broker>` as long as it's still valid, and skip the browser 
+entirely.
 
 ## Upgrading from 2.x
 
