@@ -1,10 +1,6 @@
-# `broker: all` logs into every broker below. Each broker needs its own
-# section since each has a distinct client_id/client_secret and login
-# credentials -- a flat layout can't represent two brokers at once.
-#
-# Fields placed at the top level (outside the upstox:/zerodha: sections),
-# like browser_headless below, are shared defaults: any broker section may
-# still override them.
+# `broker: all` logs into every broker below. Only `broker`,
+# browser_useragent, and browser_headless live at the top level -- every
+# other field is broker-specific and must be nested under upstox:/zerodha:.
 broker: all
 
 browser_headless: false

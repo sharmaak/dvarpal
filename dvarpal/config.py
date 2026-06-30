@@ -5,9 +5,10 @@ import yaml
 ALL_BROKERS = ('upstox', 'zerodha')
 DEFAULT_USERAGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1'
 
-# Top-level yaml keys that are structural (broker selector + per-broker
-# sections) rather than fields shared across brokers.
-_STRUCTURAL_KEYS = {'broker', *ALL_BROKERS}
+# The only fields allowed to live at the top level of dvarpal.yaml, outside
+# any broker section. Everything broker-specific (client_id, credentials,
+# urls, ...) must be nested under its own upstox:/zerodha: section.
+_SHARED_KEYS = ('browser_useragent', 'browser_headless')
 
 
 class SessionConfig:
@@ -54,9 +55,7 @@ class SessionConfig:
 
     @staticmethod
     def _resolve_broker_section(full_cfg: dict, broker: str) -> dict:
-        # Fields outside the broker sections (e.g. browser_headless) are
-        # shared defaults; a broker's own section overrides them.
-        shared = {k: v for k, v in full_cfg.items() if k not in _STRUCTURAL_KEYS}
+        shared = {k: full_cfg[k] for k in _SHARED_KEYS if k in full_cfg}
         section = full_cfg.get(broker) or {}
         return {**shared, **section}
 

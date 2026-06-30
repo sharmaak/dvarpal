@@ -31,56 +31,63 @@ For Windows and Mac, it is left upto the user to perform similar installations.
 
 ## Configuration
 
-Dvarpal picks up its configuration file from `${HOME}/.dvarpal/dvarpal.yaml`. The top-level 
-`broker` field selects which broker(s) to log into: `upstox`, `zerodha`, or `all` (both).
-
-When a single broker is selected, its fields can be written flat at the top level, as shown
-below. When `broker: all` is selected, each broker needs its own `upstox:`/`zerodha:` section,
-since each has a distinct client_id/secret and credentials that can't share a flat namespace --
-see [config_samples/all-brokers.dvarpal.yaml](config_samples/all-brokers.dvarpal.yaml). Fields
-left at the top level outside those sections (e.g. `browser_headless`) are shared defaults that
-any broker section can still override.
+Dvarpal picks up its configuration file from `${HOME}/.dvarpal/dvarpal.yaml`. Its structure is
+uniform regardless of how many brokers you use: only `broker`, `browser_useragent`, and
+`browser_headless` live at the top level since they're common to every broker; everything
+else is broker-specific and goes under its own `upstox:` / `zerodha:` section. The top-level
+`broker` field selects which section(s) are used: `upstox`, `zerodha`, or `all` (both).
 
 Upstox:
 ```yaml
 broker: upstox
 
-authn_url: https://api.upstox.com/v2/login/authorization/dialog
-authz_url: https://api.upstox.com/v2/login/authorization/token
-session_validation_url: https://api-v2.upstox.com/user/profile
+browser_useragent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1
+browser_headless: false
 
-# The following properties are part of upstox app created for API access
-client_id: <your-client-id>
-client_secret: <your-client-secret>
-redirect_uri: <your-redirect-url>
+upstox:
+  authn_url: https://api.upstox.com/v2/login/authorization/dialog
+  authz_url: https://api.upstox.com/v2/login/authorization/token
+  session_validation_url: https://api-v2.upstox.com/user/profile
 
-# TOTP secret key generated using https://help.upstox.com/support/solutions/articles/260343-what-is-totp-and-how-to-enable-totp-for-my-account-
-totp_secret_key: <your TOTP secret key>
+  # The following properties are part of upstox app created for API access
+  client_id: <your-client-id>
+  client_secret: <your-client-secret>
+  redirect_uri: <your-redirect-url>
 
-mobile: <your registered mobile number>
-pin: <your pin>
+  # TOTP secret key generated using https://help.upstox.com/support/solutions/articles/260343-what-is-totp-and-how-to-enable-totp-for-my-account-
+  totp_secret_key: <your TOTP secret key>
+
+  mobile: <your registered mobile number>
+  pin: <your pin>
 ```
 
 Zerodha:
 ```yaml
 broker: zerodha
 
-authn_url: https://kite.zerodha.com/connect/login
-authz_url: https://api.kite.trade/session/token
-session_validation_url: https://api.kite.trade/user/profile
-redirect_uri: <your-redirect-url>
+browser_useragent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1
+browser_headless: false
 
-# The following properties are part of the Kite Connect app created for API access
-client_id: <your-api-key>
-client_secret: <your-api-secret>
+zerodha:
+  authn_url: https://kite.zerodha.com/connect/login
+  authz_url: https://api.kite.trade/session/token
+  session_validation_url: https://api.kite.trade/user/profile
+  redirect_uri: <your-redirect-url>
 
-user_id: <your zerodha user id>
-password: <your zerodha password>
+  # The following properties are part of the Kite Connect app created for API access
+  client_id: <your-api-key>
+  client_secret: <your-api-secret>
 
-# Set totp_secret_key if your account's second factor is TOTP, otherwise set pin.
-totp_secret_key: <your TOTP secret key>
-pin: <your pin>
+  user_id: <your zerodha user id>
+  password: <your zerodha password>
+
+  # Set totp_secret_key if your account's second factor is TOTP, otherwise set pin.
+  totp_secret_key: <your TOTP secret key>
+  pin: <your pin>
 ```
+
+`broker: all` follows the same shape with both `upstox:` and `zerodha:` sections present --
+see [config_samples/all-brokers.dvarpal.yaml](config_samples/all-brokers.dvarpal.yaml).
 
 For more samples, refer to the [config_samples](./config_samples) directory.
 
