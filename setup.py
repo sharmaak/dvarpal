@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='dvarpal',
-    version='2.0.1',
+    version='3.0.0-beta',
     description='Automated broker login and token generator using Firefox ESR and Selenium',
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -15,8 +15,6 @@ setup(
         'PyYAML~=6.0.2',
         'requests',
         'pyotp',
-        'upstox-python-sdk',
-        'undetected_chromedriver',
         'selenium',
     ],
     classifiers=[

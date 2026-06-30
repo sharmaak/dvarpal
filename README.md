@@ -12,7 +12,8 @@ login mechanism for Indian stock brokers.
 
 ## Supported Brokers
 
-1. Upstox 
+1. Upstox
+2. Zerodha
 
 Dvarpal is designed so that support for more brokers can be added easily. 
 
@@ -30,9 +31,12 @@ For Windows and Mac, it is left upto the user to perform similar installations.
 
 ## Configuration
 
-Dvarpal picks up configration file from `${HOME}/dvarpal.yaml` file. A sample file for 
-Upstox is shared below. For more samples, refer to [config_samples](./config_samples) directory. 
+Dvarpal picks up its configuration file from `${HOME}/.dvarpal/dvarpal.yaml`. A `broker` 
+field selects which broker's login flow to use (`upstox` or `zerodha`, defaults to `upstox`). 
+Sample files for both brokers are shared below. For more samples, refer to 
+[config_samples](./config_samples) directory.
 
+Upstox:
 ```yaml
 authn_url: https://api.upstox.com/v2/login/authorization/dialog
 authz_url: https://api.upstox.com/v2/login/authorization/token
@@ -49,22 +53,44 @@ mobile: <your registered mobile number>
 pin: <your pin>
 ```
 
+Zerodha:
+```yaml
+broker: zerodha
+
+authn_url: https://kite.zerodha.com/connect/login
+authz_url: https://api.kite.trade/session/token
+session_validation_url: https://api.kite.trade/user/profile
+redirect_uri: <your-redirect-url>
+
+# The following properties are part of the Kite Connect app created for API access
+client_id: <your-api-key>
+client_secret: <your-api-secret>
+
+user_id: <your zerodha user id>
+password: <your zerodha password>
+
+# Set totp_secret_key if your account's second factor is TOTP, otherwise set pin.
+totp_secret_key: <your TOTP secret key>
+pin: <your pin>
+```
+
 ## Usage
 
-Starting version 2.0.0, Dvarpal will use Firefox ESR + Gecko Driver. 
-Support for Google Chrome and Undetected Chromedriver have been deprecated. 
-In version 2.0.1, support for Chrome will be removed. 
+Starting version 2.0.0, Dvarpal uses Firefox ESR + Gecko Driver for all brokers.
 
 ```python
-from dvarpal.session_firefox import SessionManager
+from dvarpal import get_session_manager
 
-session_manager = SessionManager()
+session_manager = get_session_manager()  # picks the broker based on config.broker
 session_manager.generate_access_token()  # to generate a new access token
 session_manager.is_session_valid()  # to check if access token is valid
 session_manager.get_access_token()  # get the actual access token string
 ```
 
-Upon generating an access_token, it is saved to text file `${HOME}/dvarpal_session`. 
+You can also instantiate a broker-specific manager directly, e.g. 
+`from dvarpal.brokers.zerodha import ZerodhaSessionManager`.
+
+Upon generating an access_token, it is saved to text file `${HOME}/.dvarpal/dvarpal_session`. 
 Before generating a new access token, dvarpal checks the file. If file exists, it loads 
 the access token from file and uses it. If the 
 token is expired or invalid, dvarpal generates a new one.

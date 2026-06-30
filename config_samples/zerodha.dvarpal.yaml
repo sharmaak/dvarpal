@@ -1,0 +1,23 @@
+broker: zerodha
+
+authn_url: https://kite.zerodha.com/connect/login
+authz_url: https://api.kite.trade/session/token
+session_validation_url: https://api.kite.trade/user/profile
+
+# redirect_uri is configured against your Kite Connect app on
+# developers.kite.trade, not passed in the login URL. It is still required
+# here so dvarpal can detect it in the post-login redirect.
+redirect_uri: <your-redirect-url>
+
+# The following properties are part of the Kite Connect app created for API access
+client_id: <your-api-key>
+client_secret: <your-api-secret>
+
+user_id: <your zerodha user id>
+password: <your zerodha password>
+
+# Set totp_secret_key if your account's second factor is TOTP, generated using
+# https://kite.trade/docs/connect/v3/user/#login-flow
+# Leave it unset and set `pin` instead if your second factor is a PIN.
+totp_secret_key: <your TOTP secret key>
+pin: <your pin>

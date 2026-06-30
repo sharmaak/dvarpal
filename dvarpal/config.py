@@ -10,6 +10,8 @@ class SessionConfig:
         cfg = SessionConfig._load_config_from_file()
         self.access_token_file = cfg.get('access_token_file') if cfg.get('access_token_file') else SessionConfig._get_access_token_file_location()
 
+        self.broker: str = cfg.get('broker', 'upstox')
+
         self.authn_url: str = cfg['authn_url']
         self.authz_url: str = cfg['authz_url']
         self.redirect_uri: str = cfg['redirect_uri']
@@ -19,9 +21,14 @@ class SessionConfig:
 
         self.client_id: str = cfg['client_id']
         self.client_secret: str = cfg['client_secret']
-        self.mobile: str = cfg['mobile']
-        self.totp_secret_key: str = cfg['totp_secret_key']
-        self.pin: str = cfg['pin']
+
+        # Upstox: mobile + totp_secret_key + pin.
+        # Zerodha: user_id + password, then totp_secret_key or pin for 2FA.
+        self.mobile = cfg.get('mobile')
+        self.user_id = cfg.get('user_id')
+        self.password = cfg.get('password')
+        self.totp_secret_key = cfg.get('totp_secret_key')
+        self.pin = cfg.get('pin')
 
     @staticmethod
     def _load_config_from_file():
